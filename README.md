@@ -9,4 +9,3 @@ Using our model, we wanted to investigate how effective each voting system is at
  * Agreeability metric should be something more traditional like dot product or a norm.
  * Opinion space should be something more interesting than a multidimensional uniform blob, like a multinomial Gaussian. 
  * Candidates could be more complex than just randomly sampled people
-T
