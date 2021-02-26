@@ -1,0 +1,55 @@
+%%%%%%%%%% Model Set-up, Assumptions, and Parameters
+We define ``the complex opinion of voter $v$'' $o^{(v)}$ as a real-valued vector of of $d$ components $o_{i} \in [-1,1]$, where $o_{i} \approx 1$ implies that $v$ has strong support towards issue $i$ and $o_{i} \approx -1$ implies the opposite. 
+This encapsulates the notion (and assumption) that an individual's final vote for a candidate is parameterized by the interactions
+between their views on several different issues.
+
+Our model is non-spatial, agent-based, and not temporally influenced.
+Complex opinions are stochastically generated, yet each voting algorithm is deterministically run.
+The model (the combination of voter opinions and election scheme) takes a random population of size $N$ where each person $p$ 
+has an opinion vector $o^{(p)}$ of dimension $d$.
+\Assumpt{1}{We consider each dimension (issue) of $o^{(p)}$ to be independent of one another $\text{\bf Pr}(o^{(p)}_i | o^{(p)}_j) = o^{(p)}_i $  $\forall i,j \in d$.}
+This means that the sampling method for an individual's opinions is consistent across the topic space and the distribution from which opinion $o_i$ is chosen is not influenced by any other opinion already drawn.
+The opinion vector $o^{(p)}$ is generated for every person, $p$ in the population, $N$ at random, where each $o^{(p)}_i$ is drawn from the uniform distribution, U$(-1,1)$.
+
+We measure the dissimilarity of two opinion vectors, $D$ by computing the mean absolute error, shown in Eq. \ref{eq:dissimscore}.
+This dissimilarity is computed between a person and each candidate and the choice or rank of the candidates is based on that value.
+At the end of the voting scheme, this dissimilarity score is used again to quantify voter satisfaction with the final elected candidate.
+\begin{align}
+\text{D}(o^{(p1)},o^{(p2)}) = \frac{\sum_{i=1}^{d}\Big|o^{(p1)}_i - o^{(p2)}_i\Big|}{d}
+\label{eq:dissimscore}
+\end{align}
+
+Minimizing dissimilarity maximizes happiness in the system and therefore the ``End-of-Election'' happiness of the population, $H_P$ is calculated by taking the average ``happiness'', as in Eq. \ref{eq:happscore},
+\begin{align}
+\text{H}_{P} =
+\frac{\sum_{p=1}^{N} \Big(2 - \text{D} \big(o^{(p)},o^{(c_w)}\big)\Big) / 2 }{N}
+\label{eq:happscore}
+\end{align}
+where $o^{c_w}$ is the full opinion vector of the candidate that won the election.
+Since 2 is the maximum dissimilarity score that can happen between two opinion vectors, happiness is renormalized as 0 being not at all happy and 1 being as happy as possible.
+
+\subsection{Opinion transparency and campaign strategies}
+In order to model the effect of campaign strategies and the realistic scenario where every person in the population does not know every opinion of every candidate, we add an opinion transparency parameter to the model.
+
+For each population, each voting system is run $d-1$ times, starting where all people can ``see'' and base their vote(s) off of each candidate's full opinion vector.
+Each subsequent time the voting system is run, the candidates ``mask'' 1 more dimension of their vector than during the previous iteration, making them $d-1$ less transparent.
+
+Each candidate also chooses to mask different components of their vector, symbolizing a campaign strategy, where the candidates are attempting to leverage certain topics and hide others from the general population.
+In our algorithm, this choice is made by each candidate in a random manner, but with each iteration they add an additional dimension to the mask while still hiding the previously hidden dimensions.
+As an example for $k = 3, d = 6$, on iteration 4, 3 components will be masked:
+\begin{align*}
+o^{(c1)} = \begin{bmatrix}\Box \\ -0.99 \\ 0.71 \\ \Box \\ \Box \\ 0.10  \end{bmatrix}
+o^{(c2)} = \begin{bmatrix}-0.54 \\ 0.79 \\ \Box \\ \Box \\ -0.11\\ \Box  \end{bmatrix}
+o^{(c3)} = \begin{bmatrix}0.58 \\ \Box \\ 0.45 \\ \Box \\ 0.99 \\ \Box  \end{bmatrix}
+\end{align*}
+and then on the next iteration the vectors could look like:
+\begin{align*}
+o^{(c1)} = \begin{bmatrix}\Box \\ \Box \\ 0.71 \\ \Box \\ \Box \\ 0.10  \end{bmatrix}
+o^{(c2)} = \begin{bmatrix}\Box \\ 0.79 \\ \Box \\ \Box \\ -0.11\\ \Box  \end{bmatrix}
+o^{(c3)} = \begin{bmatrix}0.58 \\ \Box \\ 0.45 \\ \Box \\ \Box \\ \Box  \end{bmatrix}
+\end{align*}
+With these masks, the dissimilarity scores are calculated only on the visible components of each candidates opinion vector, but the final end voter satisfaction is calculated based on the full opinion vector dissimilarity.
+Continuing from the above example, if person $p1$ has opinion vector, $$o^{(p1)}=\begin{bmatrix}0.05\\0.50\\-0.99\\-0.33\\0.89\\0.01\end{bmatrix}$$  on iteration 4, their vote for the general election would be cast for candidate 2, since their dissimilarity score is the lowest based off of the visible components.
+
+It could, and likely will, occur where the candidate that a person votes for (has minimum dissimilarity to) based off the unmasked vectors might not actually be the least similar to them, based off of the full vectors of all candidates.
+Since all of this is implemented randomly, there is not actual ``strategy'' occurring and thus {\it bad} strategies will likely be implemented.

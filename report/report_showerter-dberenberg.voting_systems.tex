@@ -1,0 +1,75 @@
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+A voting system $V$ is an algorithm that takes as input $N$ submitted ballot sheets and $k$ 
+candidates from a population of individuals and returns a single winner 
+of an election.
+Two voting systems $U$ and $V$ may have unique input formats for their ballot sheets, (e.g, plurality and ranked-choice, see~\ref{sec:intro}
+for a short description of each).
+For a certain population $k$ individuals are chosen as candidates. 
+Citizens are asked to cast their votes with respect the input requirements of $V$ and a voting system is employed across the population. \newline
+\indent Evaluation of a voting system is performed by computing the distribution of happinesses/satisfaction/agreeability across a population  
+with the winner of an election.
+This metric is described in~\ref{sec:model}.
+\newline
+\indent The voting systems that will be tested are plurality, ranked-choice, and approval voting, to be described in the following sections.
+\subsection{Plurality}
+Each individual casts a single vote for the candidate with whom they believe their opinion is aligned most.
+Votes are tallied and the candidate with the largest share of votes wins the election.
+\begin{algorithm}[H]
+\caption{Plurality Voting System Algorithm}\label{alg:plurality}
+\begin{algorithmic}
+    \Require Set of $k$ candidates $C=\{c_1, \ldots c_k\}$, ballot box $B$
+    \Return $\mathrm{argmax}_{c\in C} \Call{tally}{c, B}$
+    \Function{tally}{candidate, ballots}
+    \State \Return $\sum_{b \in B}\mathbbm{1}_{b = \mathrm{candidate}}$ 
+    \EndFunction
+\end{algorithmic}
+\end{algorithm}
+The \texttt{plurality} algorithm runs by finding the candidate that maximizes the \texttt{tally} function, a counter for the votes
+for that candidate.
+\subsection{Ranked-Choice Voting}
+Each individual ranks all candidates from most to least favorite.
+Votes are tallied to compute the proportion of the population that voted for each candidate.
+If the maximum proportion is less than majority ($\geq 51\%$), the bottom candidate is removed from the race and their votes are redistributed.
+Redistribution takes place by observing the next highest ranked candidate in each of the rank sheets submitted by those who casted votes
+to the removed candidate. This process goes on until one candidate has attained the majority share of votes. \newline
+\indent In ranked-choice voting, the algorithm takes as input a ballot box $B$ of arrays $b$ of size $k$, where $b_i[0] = $ the ideal candidate for 
+citizen $i$.
+\begin{algorithm}[H]
+\caption{Ranked-Choice Voting System Algorithm}\label{alg:ranked}
+\begin{algorithmic}
+    \Require Set of $k$ candidates $C=\{c_1, \ldots c_k\}$, ballot box $B$ of ranked choices.
+    \Function{tally}{$C, B$}   
+        \State votes $\leftarrow \{b[0] \mid b \in B\}$
+        \If{$\max \{$\Call{voteShare}{$c$,votes}$| c \in C\} \geq 0.51$}
+            \State \Return $\mathrm{argmax}_{c \in C}$ \Call{voteShare}{$c$,votes}
+        \Else
+            \State bottom $\leftarrow \mathrm{argmin}_{c \in C}$ \Call{voteShare}{$c$,votes}
+            \State $C \leftarrow C \setminus \{\mathrm{bottom}\}$
+            \For {$b \in B$}
+                \If {$b =$ bottom}
+                    \State $b \leftarrow b[1:]$ \Comment{Remove the first entry of $b$}
+                \EndIf
+            \EndFor
+            \Return {\Call{tally}{$C, B$}}
+        \EndIf
+    \EndFunction
+    \Function {voteShare}{candidate, votes}
+        \State \Return $\frac{\sum_{b \in B}\mathbbm{1}_{b = \mathrm{candidate}}}{|\mathrm{votes}|}$
+    \EndFunction
+\end{algorithmic}
+\end{algorithm}
+The algorithm proceeds by recursively calling \texttt{tally} on its candidate and ballot sheet sets until a candidate has met
+the desired popular vote threshold of $0.51$.
+\subsection{Approval Voting}
+In approval-based voting, an approval threshold is first chosen. Our work focuses on an approval threshold of $1$, the reason
+this being that our metric for the disagreement (or dissimilarity) between two opinions is bounded in $[0,2]$ and a threshold of 1 implies that
+no voter will agree with a candidate ``across the aisle''. Given the approval threshold, the citizen submits as an unordered set of candidates
+that meet that threshold with respect to dissimilarity.
+The winner of the election is selected by finding the candidate with the most votes. 
+Hence, the algorithm for approval is almost exactly the same as for plurality with the main difference being that approval
+requires a collapsing step in which all ballot sheets are submitted and aggregated into one long list of votes.
+One characteristic of approval based voting is that vote percentages may not add up to 100\%. 
+This does not change the way the election is held but should be taken into mind when computing vote related statistics. 
+
+% FYI in the revtex environ doing figure* makes your fig span both columns
+% and I think the auto placement is the top of the next page.

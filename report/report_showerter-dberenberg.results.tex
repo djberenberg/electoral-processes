@@ -1,0 +1,39 @@
+Here we compare the performance of each voting algorithm with respect to the average happiness achieved by the elected candidate and the effect of opinion transparency.
+\begin{figure}[h!]
+    \includegraphics[width=0.5\textwidth]{figs/same_winners.pdf}
+    \caption{Percentages of the same candidate being elected in a population for different voting systems and at a certain transparency level.}
+    \label{fig:winmatch}
+\end{figure}
+
+In Figure~\ref{fig:winmatch}, we show the percentage of populations that elected the same candidate for two different voting algorithms for a given transparency level.
+This demonstrates that the ranked-choice and approval algorithms are much more often arriving at the same candidate than the plurality method.
+
+In Figure~\ref{fig:satisfaction_hists}, we show for varying threshold values the distributions of satisfaction for each
+voting algorithm. This demonstrates the efficacy of each voting scheme with respect to satisfaction.
+We see that plurality is shown to have the minimum happiness in all three scenarios with approval based voting tending towards a higher mean.
+Although the differences in mean happiness are slight, we believe that the fact that these distributions are realized over
+100 separate simulations indicates that indeed approval-based and ranked-choice voting seek a more optimal candidate solution
+than plurality and that this would be seen further with even more sample populations generated.
+\begin{figure}[h!]
+\includegraphics[width=0.5\textwidth]{figs/satisfaction-hist_avgperpop.pdf}
+\caption{Histograms of the average satisfaction / happiness / agreement of the populations with the elected
+candidate. Each panel represents the a simulation for opinion transparency levels $T$ found in the bottom right of each subplot.}
+\label{fig:satisfaction_hists}
+\end{figure}
+
+The notion of the plurality method's ill-performing nature in finding the most utilitarian candidate is further indicated by visualizing voter satisfaction as a function of opinion transparency in Figure~\ref{fig:avghapp_by_transparency}.
+Here we see that plurality clearly performs the worst among the three, barely overlapping in standard error with the latter two.
+Meanwhile, ranked-choice and approval-based voting show a higher trend.
+
+Figure~\ref{fig:avghapp_by_transparency} further reveals evidence of the effect of transparency of voting systems in the complex opinion space.
+The figure suggests the intuitive claim that a candidate's revealing their full position in opinion space results in a increase in voter satisfaction post election.
+
+We can further draw the conclusion that if candidates are imagined to stop at nothing to attain office, their best case scenario to win an election is the one where they reveal the least about themselves, leaving the vote up to uniform chance.
+This claim clearly comes with various caveats and may be biased through the model.
+
+\begin{figure}[h!]
+\includegraphics[width=0.5\textwidth]{figs/avghapp_transparency.pdf}
+\caption{Average citizen satisfaction for all populations for each voting system and transparency level shown
+    with 95\% confidence interval of standard error.}
+    \label{fig:avghapp_by_transparency}
+\end{figure}
